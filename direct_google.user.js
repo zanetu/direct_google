@@ -64,7 +64,6 @@ function modifyGoogle() {
 			var m = this.href.match(/(?:\&adurl|\?q|\&url)\=(http.*?)(\&|$)/i)
 			if(m && m[1]) {
 				var link = decodeURIComponent(m[1])
-				link = link.replace('=http://clickserve.dartsearch.net/', '=')
 				m = link.match(/\=(https?(\%3A\%2F\%2F|\:\/\/).*?)(\&|$)/i)
 				if(m && m[1]) {
 					link = decodeURIComponent(m[1])
