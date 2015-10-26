@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Direct Google
 // @namespace    http://userscripts.org/users/92143
-// @version      2.1
+// @version      2.1.1
 // @description  Removes Google redirects and exposes "Cached" links. 
 // @include      /^https?\:\/\/(www|news|maps|docs|cse|encrypted)\.google\./
 // @author       zanetu
@@ -23,21 +23,18 @@ String.prototype.startsWith = function(s) {
 	return this.slice(0, s.length) == s
 }
 
-function blockListeners(element, events) {
-	function stopBubbling(event) {
-		event.stopPropagation()
-	}
+function stopBubbling(event) {
+	event.stopPropagation()
+}
 
-	var eventList = events.split(' ')
-	if(eventList) {
-		var i, event
-		for(i = eventList.length - 1; i > -1; i--) {
-			event = eventList[i].trim()
-			if(event) {
-				element.removeEventListener(event, stopBubbling, true)
-				element.addEventListener(event, stopBubbling, true)
-			}
-		}
+function blockListeners(element, events) {
+	if(!(element instanceof EventTarget && typeof events === 'string')) {
+		return
+	}
+	var eventList = events.split(/\W+/) || []
+	for(var i = 0, event; event = eventList[i]; i++) {
+		element.removeEventListener(event, stopBubbling, true)
+		element.addEventListener(event, stopBubbling, true)
 	}
 }
 
@@ -106,7 +103,7 @@ function modifyGoogle() {
 }
 
 MutationObserver = window.MutationObserver || window.WebKitMutationObserver
-if(MutationObserver) { 
+if(MutationObserver) {
 	var observer = new MutationObserver(function(mutations) {
 		modifyGoogle()
 	})
