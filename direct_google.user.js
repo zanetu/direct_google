@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Direct Google
 // @namespace    http://userscripts.org/users/92143
-// @version      2.1.1
+// @version      2.1.2
 // @description  Removes Google redirects and exposes "Cached" links. 
 // @include      /^https?\:\/\/(www|news|maps|docs|cse|encrypted)\.google\./
 // @author       zanetu
@@ -33,7 +33,7 @@ function blockListeners(element, events) {
 	}
 	var eventList = events.split(/\W+/) || []
 	for(var i = 0, event; event = eventList[i]; i++) {
-		element.removeEventListener(event, stopBubbling, true)
+		//removeEventListener is not needed as duplicate listeners would be discarded
 		element.addEventListener(event, stopBubbling, true)
 	}
 }
