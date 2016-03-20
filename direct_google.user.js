@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Direct Google
 // @namespace    http://userscripts.org/users/92143
-// @version      1.5
+// @version      2.3
 // @description  Removes Google redirects and exposes "Cached" links. 
 // @include      /^https?\:\/\/(www|news|maps|docs|cse|encrypted)\.google\./
 // @author       zanetu
@@ -23,21 +23,18 @@ String.prototype.startsWith = function(s) {
 	return this.slice(0, s.length) == s
 }
 
-function blockListeners(element, events) {
-	function stopBubbling(event) {
-		event.stopPropagation()
-	}
+function stopBubbling(event) {
+	event.stopPropagation()
+}
 
-	var eventList = events.split(' ')
-	if(eventList) {
-		var i, event
-		for(i = eventList.length - 1; i > -1; i--) {
-			event = eventList[i].trim()
-			if(event) {
-				element.removeEventListener(event, stopBubbling, true)
-				element.addEventListener(event, stopBubbling, true)
-			}
-		}
+function blockListeners(element, events) {
+	if(!(element instanceof EventTarget && typeof events === 'string')) {
+		return
+	}
+	var eventList = events.split(/\W+/) || []
+	for(var i = 0, event; event = eventList[i]; i++) {
+		//removeEventListener is not needed as duplicate listeners would be discarded
+		element.addEventListener(event, stopBubbling, true)
 	}
 }
 
@@ -95,18 +92,20 @@ function modifyGoogle() {
 		}
 	})
 	//expose cached links
-	$('div[role="menu"] ul li a[href^="http://webcache.googleusercontent."]').each(
+	$('div[role="menu"] ol li').find('a[href^="http://webcache.googleusercontent."]' + 
+		', a[href^="https://webcache.googleusercontent."]').each(
 		function() {
 			this.style.display = 'inline'
 			$(this).closest('div.action-menu.ab_ctl, div._nBb')
-			.after(' <a href="https' + this.href.substring(4) + '">(https)</a> ')
+			.after(' <a href="' + this.href.replace(/^http\:/, 'https:') + 
+				'">(https)</a> ')
 			.after($(this))
 		}
 	)
 }
 
 MutationObserver = window.MutationObserver || window.WebKitMutationObserver
-if(MutationObserver) { 
+if(MutationObserver) {
 	var observer = new MutationObserver(function(mutations) {
 		modifyGoogle()
 	})
