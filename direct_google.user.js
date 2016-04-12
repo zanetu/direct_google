@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Direct Google
 // @namespace    http://userscripts.org/users/92143
-// @version      2.3.0.3
+// @version      2.3.0.4
 // @description  Removes Google redirects and exposes "Cached" links. 
 // @include      /^https?\:\/\/(www|news|maps|docs|cse|encrypted)\.google\./
 // @author       zanetu
