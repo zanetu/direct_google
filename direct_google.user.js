@@ -45,10 +45,12 @@ function modifyGoogle() {
 	$('a[href^="/interstitial?"]').each(function() {
 		var m = $(this).attr('href').match(/(?:\?|\&)url\=([^\&]+)/i)
 		if(m && m[1]) {
-		    this.href = decodeURIComponent(m[1])
+			this.href = decodeURIComponent(m[1])
+			//warning prefix
+			if(!$(this).index()) {
+			    $('<span title="Unsafe">&#9888</span>').insertBefore(this)
+			}
 		}
-		//warning prefix
-		!$(this).index() && $('<span title="Unsafe">&#9888</span>').insertBefore(this)
 	})
 	//remove custom search redirects
 	$('.gsc-results a[href][data-cturl]').each(function() {
