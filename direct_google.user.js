@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Direct Google
 // @namespace    http://userscripts.org/users/92143
-// @version      2.3.0.7
+// @version      2.4
 // @description  Removes Google redirects and exposes "Cached" links. 
 // @include      /^https?\:\/\/(www|news|maps|docs|cse|encrypted)\.google\./
 // @author       zanetu
@@ -41,6 +41,17 @@ function blockListeners(element, events) {
 function modifyGoogle() {
 	//remove web/video search redirects
 	$('a[onmousedown^="return rwt("]').removeAttr('onmousedown')
+	//remove web/video safe-browsing redirects
+	$('a[href^="/interstitial?"]').each(function() {
+		var m = $(this).attr('href').match(/(?:\?|\&)url\=([^\&]+)/i)
+		if(m && m[1]) {
+			this.href = decodeURIComponent(m[1])
+			//warning prefix
+			if(!$(this).index()) {
+			    $('<span title="Unsafe">&#9888</span>').insertBefore(this)
+			}
+		}
+	})
 	//remove custom search redirects
 	$('.gsc-results a[href][data-cturl]').each(function() {
 		blockListeners(this, 'mousedown')
