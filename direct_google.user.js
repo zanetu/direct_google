@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Direct Google
 // @namespace    http://userscripts.org/users/92143
-// @version      2.4
+// @version      2.5
 // @description  Removes Google redirects and exposes "Cached" links. 
 // @include      /^https?\:\/\/(www|news|maps|docs|cse|encrypted)\.google\./
 // @author       zanetu
@@ -73,7 +73,7 @@ function modifyGoogle() {
 			if(m && m[1]) {
 				var link = decodeURIComponent(m[1])
 				link = link.replace
-				(/\=http(\%3A|\:)(\%2F|\/){2}.*(?=\=http(\%3A|\:)(\%2F|\/){2})/i, '')
+				(/\=http(\%3A|\:)(\%2F|\/){2}.*(?=\=https?(\%3A|\:)(\%2F|\/){2})/i, '')
 				m = link.match(/\=(https?(\%3A|\:)(\%2F|\/){2}.*?)(\&|$)/i)
 				if(m && m[1]) {
 					link = decodeURIComponent(m[1])
