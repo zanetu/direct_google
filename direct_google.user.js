@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Direct Google
 // @namespace    http://userscripts.org/users/92143
-// @version      2.4
+// @version      3.0
 // @description  Removes Google redirects and exposes "Cached" links. 
 // @include      /^https?\:\/\/(www|news|maps|docs|cse|encrypted)\.google\./
 // @author       zanetu
@@ -41,6 +41,17 @@ function blockListeners(element, events) {
 function modifyGoogle() {
 	//remove web/video search redirects
 	$('a[onmousedown^="return rwt("]').removeAttr('onmousedown')
+	//remove web/video safe-browsing redirects
+	$('a[href^="/interstitial?"]').each(function() {
+		var m = $(this).attr('href').match(/(?:\?|\&)url\=([^\&]+)/i)
+		if(m && m[1]) {
+			this.href = decodeURIComponent(m[1])
+			//warning prefix
+			if(!$(this).index()) {
+			    $('<span title="Unsafe">&#9888</span>').insertBefore(this)
+			}
+		}
+	})
 	//remove custom search redirects
 	$('.gsc-results a[href][data-cturl]').each(function() {
 		blockListeners(this, 'mousedown')
@@ -61,8 +72,9 @@ function modifyGoogle() {
 			var m = this.href.match(/(?:\&adurl|\?q|\&url)\=(http.*?)(\&|$)/i)
 			if(m && m[1]) {
 				var link = decodeURIComponent(m[1])
-				link = link.replace('=http://clickserve.dartsearch.net/', '=')
-				m = link.match(/\=(https?(\%3A\%2F\%2F|\:\/\/).*?)(\&|$)/i)
+				link = link.replace
+				(/\=http(\%3A|\:)(\%2F|\/){2}.*(?=\=https?(\%3A|\:)(\%2F|\/){2})/i, '')
+				m = link.match(/\=(https?(\%3A|\:)(\%2F|\/){2}.*?)(\&|$)/i)
 				if(m && m[1]) {
 					link = decodeURIComponent(m[1])
 				}
