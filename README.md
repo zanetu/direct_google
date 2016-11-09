@@ -4,5 +4,5 @@
 **Install:** [Stable](https://rawgit.com/zanetu/direct_google/master/direct_google.user.js) / [Beta](https://rawgit.com/zanetu/direct_google/beta/direct_google.user.js)
 
 #### A userscript that removes Google redirects and exposes "Cached" links. 
-- Intended to work on Google (custom) search/images/shopping/news/videos/maps/docs. 
+- Intended to work on Google (custom) search/images/shopping/news/videos/maps/docs/(G)mail. 
 - Can be used in conjunction with [Direct Google Images](http://github.com/zanetu/direct_google_images). 

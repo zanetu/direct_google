@@ -1,9 +1,9 @@
 // ==UserScript==
 // @name         Direct Google
 // @namespace    http://userscripts.org/users/92143
-// @version      2.99
+// @version      3.1
 // @description  Removes Google redirects and exposes "Cached" links. 
-// @include      /^https?\:\/\/(www|news|maps|docs|cse|encrypted)\.google\./
+// @include      /^https?\:\/\/(www|news|maps|docs|cse|encrypted|mail)\.google\./
 // @author       zanetu
 // @license      GPL version 2 or any later version; http://www.gnu.org/licenses/gpl-2.0.txt
 // @require      http://cdnjs.cloudflare.com/ajax/libs/jquery/1.8.3/jquery.min.js
@@ -94,6 +94,10 @@ function modifyGoogle() {
 				}
 			}
 		})
+	}
+	//remove mail/gmail redirects
+	else if(hostname.startsWith('mail.')) {
+	    $('a[data-saferedirecturl]').removeAttr('data-saferedirecturl')
 	}
 	//remove legacy search redirects and docs redirects
 	//should be done last as shopping uses the same url pattern
