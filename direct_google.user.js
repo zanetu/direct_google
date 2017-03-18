@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Direct Google
 // @namespace    http://userscripts.org/users/92143
-// @version      3.2
+// @version      3.3
 // @description  Removes Google redirects and exposes "Cached" links. 
 // @include      /^https?\:\/\/(www|news|maps|docs|cse|encrypted|mail)\.google\./
 // @author       zanetu
@@ -48,7 +48,10 @@ function handleChange() {
 			this.href = decodeURIComponent(m[1])
 			//warning prefix
 			if(!$(this).index()) {
-			    $('<span title="Unsafe">&#9888</span>').insertBefore(this)
+				$('<span title="Unsafe">&#9888</span>')
+				//news with pictures
+				.css('float', 'left')
+				.insertBefore(this)
 			}
 		}
 	})
@@ -81,7 +84,7 @@ function handleChange() {
 	}
 	//remove mail/gmail redirects
 	else if(hostname.startsWith('mail.')) {
-	    $('a[data-saferedirecturl]').removeAttr('data-saferedirecturl')
+		$('a[data-saferedirecturl]').removeAttr('data-saferedirecturl')
 	}
 	//remove legacy search redirects and docs redirects
 	$('a[href*="/url?"]').each(function() {
@@ -99,6 +102,8 @@ function handleChange() {
 			.after(' <a href="' + this.href.replace(/^http\:/, 'https:') + 
 				'">(https)</a> ')
 			.after($(this))
+			//material design
+			.parent().css('white-space', 'nowrap')
 		}
 	)
 }
