@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Direct Google
 // @namespace    http://userscripts.org/users/92143
-// @version      3.1
+// @version      3.3
 // @description  Removes Google redirects and exposes "Cached" links. 
 // @include      /^https?\:\/\/(www|news|maps|docs|cse|encrypted|mail)\.google\./
 // @author       zanetu
@@ -38,8 +38,8 @@ function blockListeners(element, events) {
 	}
 }
 
-function modifyGoogle() {
-	//remove web/video search redirects
+function handleChange() {
+	//remove web/video search redirects; does not remove redirects of advertisement
 	$('a[onmousedown^="return rwt("]').removeAttr('onmousedown')
 	//remove web/video safe-browsing redirects
 	$('a[href^="/interstitial?"]').each(function() {
@@ -48,7 +48,10 @@ function modifyGoogle() {
 			this.href = decodeURIComponent(m[1])
 			//warning prefix
 			if(!$(this).index()) {
-			    $('<span title="Unsafe">&#9888</span>').insertBefore(this)
+				$('<span title="Unsafe">&#9888</span>')
+				//news with pictures
+				.css('float', 'left')
+				.insertBefore(this)
 			}
 		}
 	})
@@ -66,22 +69,6 @@ function modifyGoogle() {
 			blockListeners(this, 'click contextmenu mousedown mousemove')
 		})
 	}
-	//remove shopping search redirects
-	else if(href.contains('tbm=shop') || pathname.startsWith('/shopping/')) {
-		$('a').filter('[href*="/aclk?"], [href*="/url?"]').each(function() {
-			var m = this.href.match(/(?:\&adurl|\?q|\&url)\=(http.*?)(\&|$)/i)
-			if(m && m[1]) {
-				var link = decodeURIComponent(m[1])
-				link = link.replace
-				(/\=http(\%3A|\:)(\%2F|\/){2}.*(?=\=https?(\%3A|\:)(\%2F|\/){2})/i, '')
-				m = link.match(/\=(https?(\%3A|\:)(\%2F|\/){2}.*?)(\&|$)/i)
-				if(m && m[1]) {
-					link = decodeURIComponent(m[1])
-				}
-				this.href = link
-			}
-		})
-	}
 	//remove map search redirects; does not remove redirects of advertisement
 	else if(pathname.startsWith('/maps/') || '/maps' == pathname) {
 		$('a[href^="http"]').each(function() {
@@ -97,10 +84,9 @@ function modifyGoogle() {
 	}
 	//remove mail/gmail redirects
 	else if(hostname.startsWith('mail.')) {
-	    $('a[data-saferedirecturl]').removeAttr('data-saferedirecturl')
+		$('a[data-saferedirecturl]').removeAttr('data-saferedirecturl')
 	}
 	//remove legacy search redirects and docs redirects
-	//should be done last as shopping uses the same url pattern
 	$('a[href*="/url?"]').each(function() {
 		var m = this.href.match(/\/url\?(?:url|q)\=(http.*?)(\&|$)/i)
 		if(m && m[1]) {
@@ -116,27 +102,19 @@ function modifyGoogle() {
 			.after(' <a href="' + this.href.replace(/^http\:/, 'https:') + 
 				'">(https)</a> ')
 			.after($(this))
+			//material design
+			.parent().css('white-space', 'nowrap')
 		}
 	)
 }
 
 MutationObserver = window.MutationObserver || window.WebKitMutationObserver
 if(MutationObserver) {
-	var observer = new MutationObserver(function(mutations) {
-		modifyGoogle()
-	})
-	//tiny delay needed for firefox
-	setTimeout(function() {
-		observer.observe(document.body, {
-			childList: true, 
-			subtree: true
-		})
-		modifyGoogle()
-	}, 100)
+	var observer = new MutationObserver(handleChange)
+	observer.observe(document.documentElement, {childList: true, subtree: true})
 }
 //for chrome v18-, firefox v14-, internet explorer v11-, opera v15- and safari v6-
 else {
-	setInterval(function() {
-		modifyGoogle()
-	}, 500)
+	setInterval(handleChange, 500)
 }
+handleChange()
