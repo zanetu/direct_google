@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Direct Google
 // @namespace    http://userscripts.org/users/92143
-// @version      3.3
+// @version      3.4
 // @description  Removes Google redirects and exposes "Cached" links. 
 // @include      /^https?\:\/\/(www|news|maps|docs|cse|encrypted|mail)\.google\./
 // @author       zanetu
@@ -63,9 +63,9 @@ function handleChange() {
 	$('a').filter('[class^="irc_"], [class*=" irc_"], [id^="irc_"]').each(function() {
 		blockListeners(this, 'mousedown')
 	})
-	//remove news search redirects
+	//remove news search redirects; does not remove redirects of non-news
 	if(href.contains('tbm=nws') || hostname.startsWith('news.google.')) {
-		$('a.article[href^="http"]').each(function() {
+		$('a[href^="http"][target="_blank"]').each(function() {
 			blockListeners(this, 'click contextmenu mousedown mousemove')
 		})
 	}
