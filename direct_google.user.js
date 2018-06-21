@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Direct Google
 // @namespace    http://userscripts.org/users/92143
-// @version      3.4
+// @version      3.5
 // @description  Removes Google redirects and exposes "Cached" links. 
 // @include      /^https?\:\/\/(www|news|maps|docs|cse|encrypted|mail)\.google\./
 // @author       zanetu
@@ -63,10 +63,17 @@ function handleChange() {
 	$('a').filter('[class^="irc_"], [class*=" irc_"], [id^="irc_"]').each(function() {
 		blockListeners(this, 'mousedown')
 	})
-	//remove news search redirects; does not remove redirects of non-news
+	//remove some news search redirects; does not remove redirects of non-news
 	if(href.contains('tbm=nws') || hostname.startsWith('news.google.')) {
-		$('a[href^="http"][target="_blank"]').each(function() {
-			blockListeners(this, 'click contextmenu mousedown mousemove')
+		$('a[href^="./articles/"]').attr('href', function(i, v) {
+			try {
+				var m = atob(v.split(/[\/\?\_\-]/)[2]).match(/http[\x00-\x7F]+/)
+			}
+			catch(e) {
+				//atob failure: "The string to be decoded is not correctly encoded."
+				return v;
+			}
+			return m && m[0] || v
 		})
 	}
 	//remove map search redirects; does not remove redirects of advertisement
@@ -108,9 +115,9 @@ function handleChange() {
 	)
 }
 
-MutationObserver = window.MutationObserver || window.WebKitMutationObserver
-if(MutationObserver) {
-	var observer = new MutationObserver(handleChange)
+var mo = window.MutationObserver || window.WebKitMutationObserver
+if(mo) {
+	var observer = new mo(handleChange)
 	observer.observe(document.documentElement, {childList: true, subtree: true})
 }
 //for chrome v18-, firefox v14-, internet explorer v11-, opera v15- and safari v6-
