@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Direct Google
 // @namespace    http://userscripts.org/users/92143
-// @version      3.5
+// @version      3.6
 // @description  Removes Google redirects and exposes "Cached" links. 
 // @include      /^https?\:\/\/(www|news|maps|docs|cse|encrypted|mail)\.google\./
 // @author       zanetu
@@ -71,7 +71,7 @@ function handleChange() {
 			}
 			catch(e) {
 				//atob failure: "The string to be decoded is not correctly encoded."
-				return v;
+				return v
 			}
 			return m && m[0] || v
 		})
