@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Direct Google
 // @namespace    http://userscripts.org/users/92143
-// @version      3.6
+// @version      3.7
 // @description  Removes Google redirects and exposes "Cached" links. 
 // @include      /^https?\:\/\/(www|news|maps|docs|cse|encrypted|mail)\.google\./
 // @author       zanetu
@@ -105,9 +105,8 @@ function handleChange() {
 		', a[href^="https://webcache.googleusercontent."]').each(
 		function() {
 			this.style.display = 'inline'
+			this.style.marginRight = '0.5em'
 			$(this).closest('div.action-menu.ab_ctl, div._nBb')
-			.after(' <a href="' + this.href.replace(/^http\:/, 'https:') + 
-				'">(https)</a> ')
 			.after($(this))
 			//material design
 			.parent().css('white-space', 'nowrap')
