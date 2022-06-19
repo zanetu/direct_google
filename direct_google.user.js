@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Direct Google
 // @namespace    http://userscripts.org/users/92143
-// @version      3.7
+// @version      3.8
 // @description  Removes Google redirects and exposes "Cached" links. 
 // @include      /^https?\:\/\/(www|news|maps|docs|cse|encrypted|mail)\.google\./
 // @author       zanetu
@@ -40,7 +40,7 @@ function blockListeners(element, events) {
 
 function handleChange() {
 	//remove web/video search redirects; does not remove redirects of advertisement
-	$('a[onmousedown^="return rwt("]').removeAttr('onmousedown')
+	$('a[ping]').removeAttr('ping')
 	//remove web/video safe-browsing redirects
 	$('a[href^="/interstitial?"]').each(function() {
 		var m = $(this).attr('href').match(/(?:\?|\&)url\=([^\&]+)/i)
@@ -101,12 +101,12 @@ function handleChange() {
 		}
 	})
 	//expose cached links
-	$('div[role="menu"] ol li').find('a[href^="http://webcache.googleusercontent."]' + 
+	$('li.action-menu-item').find('a[href^="http://webcache.googleusercontent."]' + 
 		', a[href^="https://webcache.googleusercontent."]').each(
 		function() {
 			this.style.display = 'inline'
 			this.style.marginRight = '0.5em'
-			$(this).closest('div.action-menu.ab_ctl, div._nBb')
+			$(this).closest('div.action-menu')
 			.after($(this))
 			//material design
 			.parent().css('white-space', 'nowrap')
